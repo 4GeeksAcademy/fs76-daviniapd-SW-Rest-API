@@ -61,7 +61,7 @@ class Characters(db.Model):
 
 
     def __repr__(self):
-        return '<Planet %r>' % self.name
+        return '<Character %r>' % self.name
 
     def serialize(self):
         return {
@@ -72,5 +72,29 @@ class Characters(db.Model):
             "life_status": self.life_status,
             "gender": self.gender,
             "homeworld_id": self.homeworld_id,            
+            # do not serialize the password, its a security breach
+        }
+        
+class Vehicles(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), unique=True, nullable=False)
+    vehicles_class = db.Column(db.String(120), unique=True, nullable=True)
+    manufacturer = db.Column(db.String(120), unique=True, nullable=True)
+    autonomy = db.Column(db.String(120), unique=True, nullable=True)
+    weapons = db.Column(db.String(120), unique=True, nullable=True)
+    passengers  = db.Column(db.String(120), unique=True, nullable=True)
+
+    def __repr__(self):
+        return '<Vehicle %r>' % self.name
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "vehicles_class": self.vehicles_class,
+            "manufacturer": self.manufacturer,
+            "autonomy": self.autonomy,
+            "weapons": self.weapons,
+            "passengers": self.passengers,            
             # do not serialize the password, its a security breach
         }
