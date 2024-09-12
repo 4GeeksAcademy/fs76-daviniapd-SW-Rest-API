@@ -46,7 +46,6 @@ class Planets(db.Model):
             "population": self.population,
             "native_species": self.native_species,
             "government": self.government,            
-            # do not serialize the password, its a security breach
         }
 
 class Characters(db.Model):
@@ -72,7 +71,6 @@ class Characters(db.Model):
             "life_status": self.life_status,
             "gender": self.gender,
             "homeworld_id": self.homeworld_id,            
-            # do not serialize the password, its a security breach
         }
         
 class Vehicles(db.Model):
@@ -96,5 +94,27 @@ class Vehicles(db.Model):
             "autonomy": self.autonomy,
             "weapons": self.weapons,
             "passengers": self.passengers,            
-            # do not serialize the password, its a security breach
+        }
+        
+class Favorites(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    users_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    users = db.relationship(Users)
+    planets_id = db.Column(db.Integer, db.ForeignKey('planets.id'))
+    planets = db.relationship(Planets)
+    characters_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
+    characters = db.relationship(Characters)
+    vehicles_id = db.Column(db.Integer, db.ForeignKey('vehicles.id'))
+    vehicles = db.relationship(Vehicles)
+
+
+    def __repr__(self):
+        return '<Character %r>' % self.name
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "planets_id": self.planets_id,  
+            "characters_id": self.characters_id,   
+            "vehicles_id": self.vehicles_id,           
         }
