@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Planet, Character
+from models import db, Users, Planets, Characters
 #from models import Person
 
 app = Flask(__name__)
@@ -36,26 +36,45 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/user', methods=['GET'])
+@app.route('/users', methods=['GET'])
 def get_users():
-    all_users = User.query.all()
+    all_users = Users.query.all()
     results = list(map(lambda user: user.serialize(), all_users))
 
     return jsonify(results), 200
 
+
+@app.route('/users/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    user = Users.query.filter_by(id=user_id).first()
+
+    return jsonify(user.serialize()), 200
+
 @app.route('/planets', methods=['GET'])
 def get_planets():
-    all_planets = Planet.query.all()
+    all_planets = Planets.query.all()
     results = list(map(lambda planet: planet.serialize(), all_planets))
 
     return jsonify(results), 200
 
+@app.route('/planets/<int:planet_id>', methods=['GET'])
+def get_planet(planet_id):
+    planet = Planets.query.filter_by(id=planet_id).first()
+
+    return jsonify(planet.serialize()), 200
+
 @app.route('/characters', methods=['GET'])
 def get_characters():
-    all_characters = Character.query.all()
+    all_characters = Characters.query.all()
     results = list(map(lambda character: character.serialize(), all_characters))
 
     return jsonify(results), 200
+
+@app.route('/characters/<int:character_id>', methods=['GET'])
+def get_character(character_id):
+    character = Characters.query.filter_by(id=character_id).first()
+
+    return jsonify(character.serialize()), 200
 
 
 

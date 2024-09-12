@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-class User(db.Model):
+class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True, nullable=False)
     firstname = db.Column(db.String(120), unique=False, nullable=False)
@@ -25,7 +25,7 @@ class User(db.Model):
             # do not serialize the password, its a security breach
         }
     
-class Planet(db.Model):
+class Planets(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=True, nullable=False)
     galactic_location = db.Column(db.String(120), unique=True, nullable=True)
@@ -49,15 +49,15 @@ class Planet(db.Model):
             # do not serialize the password, its a security breach
         }
 
-class Character(db.Model):
+class Characters(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=True, nullable=False)
     specie = db.Column(db.String(120), unique=True, nullable=True)
     role = db.Column(db.String(120), unique=True, nullable=True)
     life_status = db.Column(db.String(120), unique=True, nullable=True)
     gender = db.Column(db.String(120), unique=True, nullable=True)
-    homeworld_id = db.Column(db.Integer, db.ForeignKey('planet.id'))
-    planet = db.relationship(Planet)
+    homeworld_id = db.Column(db.Integer, db.ForeignKey('planets.id'))
+    planets = db.relationship(Planets)
 
 
     def __repr__(self):
