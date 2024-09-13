@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, Users, Planets, Characters, Vehicles, Favorites
+from models import db, Users, Planets, Characters, Vehicles, Favorite_Planet, Favorite_Character, Favorite_Vehicle
 #from models import Person
 
 app = Flask(__name__)
@@ -89,18 +89,55 @@ def get_vehicle(vehicle_id):
 
     return jsonify(vehicle.serialize()), 200
 
-@app.route('/favorites', methods=['GET'])
-def get_favorites():
-    all_favorites = Favorites.query.all()
-    results = list(map(lambda favorite: favorite.serialize(), all_favorites))
+@app.route('/users/<int:user_id>/favorites', methods=['GET'])
+def get_user_favorites(user_id):
+    user = Users.query.filter_by(id=user_id).first()
+    if user is None:
+        return jsonify({"msg": "User not found"}), 404
 
-    return jsonify(results), 200
+    favorite_characters = Favorite_Character.query.filter_by(users_id=user_id).all()
+    favorite_planets = Favorite_Planet.query.filter_by(users_id=user_id).all()
+    favorite_vehicles = Favorite_Vehicle.query.filter_by(users_id=user_id).all()
 
-@app.route('/favorites/<int:favorite_id>', methods=['GET'])
-def get_favorite(favorite_id):
-    favorite = Favorites.query.filter_by(id=favorite_id).first()
+    favorite_characters_data = []
+    for favorite_character in favorite_characters:
+        character = Characters.query.filter_by(id=favorite_character.characters_id).first()
+        favorite_characters_data.append(character.serialize())
 
-    return jsonify(favorite.serialize()), 200
+    favorite_planets_data = []
+    for favorite_planet in favorite_planets:
+        planet = Planets.query.filter_by(id=favorite_planet.planets_id).first()
+        favorite_planets_data.append(planet.serialize())
+
+    favorite_vehicles_data = []
+    for favorite_vehicle in favorite_vehicles:
+        vehicle = Vehicles.query.filter_by(id=favorite_vehicle.vehicles_id).first()
+        favorite_vehicles_data.append(vehicle.serialize())
+
+    return jsonify({
+        "characters": favorite_characters_data,
+        "planets": favorite_planets_data,
+        "vehicles": favorite_vehicles_data
+    }), 200
+
+
+
+# @app.route('/users', methods=['POST'])
+# def add_user():
+#     body = request.get_json()
+#     required_fields = ['username', 'firstname', 'lastname', 'email']
+    
+#     for field in required_fields:
+#         if field not in body:
+#             return jsonify(f'ERROR: You must return a {field}'), 400
+#         elif body[field] == '':
+#             return jsonify(f"ERROR: {field} can't be empty"), 400
+             
+#     user = Users(username = body['username'], firstname = body['firstname'], lastname = body['lastname'], email = body['email'])
+#     db.session.add(user)
+#     db.session.commit()
+    
+#     return jsonify(user.serialize()), 200
 
 
 # this only runs if `$ python src/app.py` is executed
