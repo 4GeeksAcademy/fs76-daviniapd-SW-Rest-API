@@ -104,7 +104,7 @@ class Vehicles(db.Model):
             "passengers": self.passengers,            
         }
         
-        
+#Si estas leyendo esto, dale like a mi repositorio (<3 venga va, una estrellita <3)
 class Favorite_Planet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -115,7 +115,7 @@ class Favorite_Planet(db.Model):
         return '<Favorite_Planet %r>' % self.name
 
     def serialize(self):
-        #Para traerme los datos del user y del planet por el id y asi poder poner una descripción dinámica
+        #Para traerme los datos del user y del planet por el id y asi poder poner una descripción dinámica 
         user = Users.query.get(self.user_id)
         planet = Planets.query.get(self.planet_id)
         self.description = f"{user.username} likes {planet.name}"

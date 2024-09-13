@@ -94,7 +94,7 @@ def get_user_favorites(user_id):
     #Para confirmar que el usuario que buscas existe
     user = Users.query.filter_by(id=user_id).first()
     if user is None:
-        return jsonify({"msg": "User not found"}), 404
+        return jsonify("ERROR: User not found"), 400
 
     favorite_characters = Favorite_Character.query.filter_by(user_id=user_id).all()
     favorite_planets = Favorite_Planet.query.filter_by(user_id=user_id).all()
@@ -127,12 +127,12 @@ def get_user_favorites(user_id):
 def add_favorite_planet():
     request_body = request.get_json()
 
-    #Para que se introduzca el id de un usuario que exista             
+    #Para que no se introduzca el id de un usuario que exista             
     user = Users.query.get(request_body["user_id"])
     if user is None:
         return jsonify("ERROR: user_id not exist"), 400
 
-    #Para que se introduzca el id de un planeta que exista
+    #Para que no se introduzca el id de un planeta que exista
     planet = Planets.query.get(request_body["planet_id"])
     if planet is None:
         return jsonify("ERROR: planet_id not exist"), 400
@@ -207,6 +207,43 @@ def add_favorite_vehicle():
     db.session.commit()
 
     return jsonify(new_favorite.serialize()), 200
+
+@app.route('/favorites/planets/<int:favorite_planet_id>', methods=['DELETE'])
+def delete_favorite_planet(favorite_planet_id):
+    
+    #Para confirmar que existe el id que se quiere eliminar
+    favorite_planet = Favorite_Planet.query.filter_by(id=favorite_planet_id).first()
+    if favorite_planet is None:
+        return jsonify("ERROR: Favorite planet not found"), 400
+
+    db.session.delete(favorite_planet)
+    db.session.commit()
+
+    return jsonify(favorite_planet.serialize()), 200
+
+@app.route('/favorites/characters/<int:favorite_character_id>', methods=['DELETE'])
+def delete_favorite_character(favorite_character_id):
+    
+    favorite_character = Favorite_Character.query.filter_by(id=favorite_character_id).first()
+    if favorite_character is None:
+        return jsonify("ERROR: Favorite character not found"), 400
+
+    db.session.delete(favorite_character)
+    db.session.commit()
+
+    return jsonify(favorite_character.serialize()), 200
+
+@app.route('/favorites/vehicles/<int:favorite_vehicle_id>', methods=['DELETE'])
+def delete_favorite_vehicle(favorite_vehicle_id):
+    
+    favorite_vehicle = Favorite_Vehicle.query.filter_by(id=favorite_vehicle_id).first()
+    if favorite_vehicle is None:
+        return jsonify("ERROR: Favorite vehicle not found"), 400
+
+    db.session.delete(favorite_vehicle)
+    db.session.commit()
+
+    return jsonify(favorite_vehicle.serialize()), 200
 
 
 # this only runs if `$ python src/app.py` is executed
