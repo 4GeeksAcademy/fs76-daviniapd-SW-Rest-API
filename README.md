@@ -1,3 +1,27 @@
+# Welcome to my first API with Flask SQLAlchemy
+<h3>Enjoy and give me a <img src="https://github.com/user-attachments/assets/da7fe0b2-10b7-441c-8f68-7ddd2d31ada9" alt="star" style="vertical-align:middle; margin:2px; opacity:0.75; height:20px"> </h3>
+
+![Diagram SW Api dpd](https://github.com/user-attachments/assets/7a350891-23ff-4cf6-b08e-86e6dac3aeb8)
+(This is the database diagram)
+
+This would be the list of endpoints that require the API:
+- [GET] /users
+- [GET] /users/<int:user_id>
+- [GET] /planets
+- [GET] /planets/<int:planet_id>
+- [GET] /characters
+- [GET] /characters/<int:character_id>
+- [GET] /vehicles
+- [GET] /vehicles/<int:vehicle_id>
+- [GET] /users/<int:user_id>/favorites
+- [POST] /favorites/planets
+- [POST] /favorites/characters
+- [POST] /favorites/vehicles
+- [DELETE] /favorites/planets/<int:favorite_planet_id>
+- [DELETE] /favorites/characters/<int:favorite_character_id>
+- [DELETE] /favorites/vehicles/<int:favorite_vehicle_id>
+
+
 <a href="https://www.breatheco.de"><img height="280" align="right" src="https://github.com/4GeeksAcademy/flask-rest-hello/blob/main/docs/assets/badge.png?raw=true"></a>
 
 # Flask Boilerplate for Junior Developers
