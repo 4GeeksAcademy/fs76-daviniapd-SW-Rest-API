@@ -43,7 +43,6 @@ def get_users():
 
     return jsonify(results), 200
 
-
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     user = Users.query.filter_by(id=user_id).first()
@@ -91,27 +90,29 @@ def get_vehicle(vehicle_id):
 
 @app.route('/users/<int:user_id>/favorites', methods=['GET'])
 def get_user_favorites(user_id):
+    
+    #Para confirmar que el usuario que buscas existe
     user = Users.query.filter_by(id=user_id).first()
     if user is None:
         return jsonify({"msg": "User not found"}), 404
 
-    favorite_characters = Favorite_Character.query.filter_by(users_id=user_id).all()
-    favorite_planets = Favorite_Planet.query.filter_by(users_id=user_id).all()
-    favorite_vehicles = Favorite_Vehicle.query.filter_by(users_id=user_id).all()
+    favorite_characters = Favorite_Character.query.filter_by(user_id=user_id).all()
+    favorite_planets = Favorite_Planet.query.filter_by(user_id=user_id).all()
+    favorite_vehicles = Favorite_Vehicle.query.filter_by(user_id=user_id).all()
 
     favorite_characters_data = []
     for favorite_character in favorite_characters:
-        character = Characters.query.filter_by(id=favorite_character.characters_id).first()
+        character = Characters.query.filter_by(id=favorite_character.character_id).first()
         favorite_characters_data.append(character.serialize())
 
     favorite_planets_data = []
     for favorite_planet in favorite_planets:
-        planet = Planets.query.filter_by(id=favorite_planet.planets_id).first()
+        planet = Planets.query.filter_by(id=favorite_planet.planet_id).first()
         favorite_planets_data.append(planet.serialize())
 
     favorite_vehicles_data = []
     for favorite_vehicle in favorite_vehicles:
-        vehicle = Vehicles.query.filter_by(id=favorite_vehicle.vehicles_id).first()
+        vehicle = Vehicles.query.filter_by(id=favorite_vehicle.vehicle_id).first()
         favorite_vehicles_data.append(vehicle.serialize())
 
     return jsonify({
@@ -122,22 +123,90 @@ def get_user_favorites(user_id):
 
 
 
-# @app.route('/users', methods=['POST'])
-# def add_user():
-#     body = request.get_json()
-#     required_fields = ['username', 'firstname', 'lastname', 'email']
+@app.route('/favorites/planets', methods=['POST'])
+def add_favorite_planet():
+    request_body = request.get_json()
+
+    #Para que se introduzca el id de un usuario que exista             
+    user = Users.query.get(request_body["user_id"])
+    if user is None:
+        return jsonify("ERROR: user_id not exist"), 400
+
+    #Para que se introduzca el id de un planeta que exista
+    planet = Planets.query.get(request_body["planet_id"])
+    if planet is None:
+        return jsonify("ERROR: planet_id not exist"), 400
     
-#     for field in required_fields:
-#         if field not in body:
-#             return jsonify(f'ERROR: You must return a {field}'), 400
-#         elif body[field] == '':
-#             return jsonify(f"ERROR: {field} can't be empty"), 400
+    #Para no duplicar favoritos de un mismo usuario
+    existing_favorite = Favorite_Planet.query.filter_by(user_id=request_body["user_id"], planet_id=request_body["planet_id"]).first()
+    if existing_favorite:
+        return jsonify("ERROR: favorite planet already exists for this user"), 400
+
+    new_favorite = Favorite_Planet(
+        user_id=request_body["user_id"],
+        planet_id=request_body["planet_id"],
+        #Para que se muestre una descripcion de quien le dio like a qué y no solo sean ids
+        description=f"{user.username} likes {planet.name}"
+    )
+
+    db.session.add(new_favorite)
+    db.session.commit()
+
+    return jsonify(new_favorite.serialize()), 200
+
+@app.route('/favorites/characters', methods=['POST'])
+def add_favorite_character():
+    request_body = request.get_json()
              
-#     user = Users(username = body['username'], firstname = body['firstname'], lastname = body['lastname'], email = body['email'])
-#     db.session.add(user)
-#     db.session.commit()
+    user = Users.query.get(request_body["user_id"])
+    if user is None:
+        return jsonify("ERROR: user_id not exist"), 400
+
+    character = Characters.query.get(request_body["character_id"])
+    if character is None:
+        return jsonify("ERROR: character_id not exist"), 400
     
-#     return jsonify(user.serialize()), 200
+    existing_favorite = Favorite_Character.query.filter_by(user_id=request_body["user_id"], character_id=request_body["character_id"]).first()
+    if existing_favorite:
+        return jsonify("ERROR: favorite character already exists for this user"), 400
+
+    new_favorite = Favorite_Character(
+        user_id=request_body["user_id"],
+        character_id=request_body["character_id"],
+        description=f"{user.username} likes {character.name}"
+    )
+
+    db.session.add(new_favorite)
+    db.session.commit()
+
+    return jsonify(new_favorite.serialize()), 200
+
+@app.route('/favorites/vehicles', methods=['POST'])
+def add_favorite_vehicle():
+    request_body = request.get_json()
+             
+    user = Users.query.get(request_body["user_id"])
+    if user is None:
+        return jsonify("ERROR: user_id not exist"), 400
+
+    vehicle = Vehicles.query.get(request_body["vehicle_id"])
+    if vehicle is None:
+        return jsonify("ERROR: vehicle_id not exist"), 400
+    
+    existing_favorite = Favorite_Vehicle.query.filter_by(user_id=request_body["user_id"], vehicle_id=request_body["vehicle_id"]).first()
+    if existing_favorite:
+        return jsonify("ERROR: favorite vehicle already exists for this user"), 400
+
+    new_favorite = Favorite_Vehicle(
+        user_id=request_body["user_id"],
+        vehicle_id=request_body["vehicle_id"],
+        description=f"{user.username} likes {vehicle.name}"
+    )
+
+    db.session.add(new_favorite)
+    db.session.commit()
+
+    return jsonify(new_favorite.serialize()), 200
 
 
 # this only runs if `$ python src/app.py` is executed
