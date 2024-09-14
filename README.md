@@ -1,5 +1,5 @@
 # Welcome to my first API with Flask SQLAlchemy
-<h3>Enjoy and give me a <img src="https://github.com/user-attachments/assets/da7fe0b2-10b7-441c-8f68-7ddd2d31ada9" alt="star" style="vertical-align:middle; margin:2px; opacity:0.75; height:20px"> </h3>
+[Enjoy and give me a <img src="https://github.com/user-attachments/assets/da7fe0b2-10b7-441c-8f68-7ddd2d31ada9" alt="star" style="vertical-align:middle; margin:2px; opacity:0.75; height:20px">  here](https://github.com/daviniapd/Flask-SQLAlchemy-Rest-API_StarWars) 
 
 ![Diagram SW Api dpd](https://github.com/user-attachments/assets/7a350891-23ff-4cf6-b08e-86e6dac3aeb8)
 (This is the database diagram)
